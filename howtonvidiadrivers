@@ -1,0 +1,54 @@
+//this is how to set up the nvidia drivers for the w520 with the quadro 1000m dgpu
+
+//install the following packages
+
+sudo pacman -S nvidia-390xx-dkms bumblebee bbswitch primus lib32-primus 
+lib32-virtualgl
+
+//install nvidia-xrun from the aur, dont forget to edit the pkgbuild and remove nvidia from the list of dependencies, so it wont try to install the nvidia drivers
+
+trizen nvidia-xrun
+//edit pkgbuild and remove the nvidia dependency
+
+//create the following file
+
+nano ~/.nvidia-xinitrc
+//write this into the file
+exec i3
+
+//if you havent rebooted since installing the drivers do it now
+
+reboot
+
+//enable prime sync by editing the followig file
+
+sudo nano /etc/modprobe.d/nvidia.conf
+//write this into it
+options nvidia-drm modeset=1
+
+//make sure that your bios settings are as follows:
+
+//bios settings:
+//config/display:
+//boot display device: thinkpad lcd
+//graphics device: nvidia optimus
+//os detection for nvidia optimus: disabled
+
+//add yourself to the bumblebee group and enable the bumblebee daemon
+
+sudo gpasswd -a $USER bumblebee
+sudo systemctl enable bumblebeed
+
+//enable bbswitch
+
+sudo tee /proc/acpi/bbswitch<<<ON
+
+//install or if needed reinstall the following packages
+
+sudo pacman -Syu
+sudo pacman -S linux linux-headers dkms
+sudo pacman -S nvidia-390xx-dkms nvidia-390xx-settings 
+nvidia-390xx-utils opencl-nvidia-390xx lib32-nvidia-390xx-utils 
+lib32-opencl-nvidia-390xx
+
+//reboot and enjoy
